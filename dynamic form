@@ -1,0 +1,162 @@
+import React from "react";
+import "./label-inputbox.scss";
+import PropTypes from 'prop-types';
+
+class NissanInputBox extends React.Component {
+  constructor(props){
+    super(props);
+    this.state={
+      value:""
+    }
+  }
+  handleChange=(event)=>{
+    this.setState({value:event.target.value},()=>{
+      this.props.getValue(this.state.value);
+    })
+  }
+  render() {
+    const{
+     inputlabelprops,
+    }=this.props;
+    return (
+      <div className={"nissan-label-input"}>
+         <div className={inputlabelprops.className}>
+          <label >{inputlabelprops.labelname}<span>*</span></label>
+          {inputlabelprops.isQuestion ?<i>?</i>:""}
+          <input type="text" 
+          className={"form-control"} 
+          id={""} readonly = {inputlabelprops.readonly}
+           placeholder={inputlabelprops.placeholder} 
+           value={inputlabelprops.value}
+           onChange={(event)=>this.handleChange(event)}
+           onKeyPress={this.props.KeyPressfun?(e)=>this.props.KeyPressfun(e):''} 
+
+          />
+          <span>invalid error</span>
+        </div>  
+      </div>  
+    );
+  }
+}
+NissanInputBox.propTypes = {
+  inputlabelprops: PropTypes.object,
+  className : PropTypes.string,
+  labelname : PropTypes.string,
+  readonly : PropTypes.string,
+  placeholder: PropTypes.string
+}
+export default NissanInputBox;
+
+
+import React from 'react';
+import './automationprofile.scss';
+import SelectDropDown from '../../../common/component/label-selectdropdown/label-selectdropdown';
+import NissanTexaArea from '../../../common/component/label-textarea/label-textarea';
+import NissanRadioButton from '../../../common/component/label-radiobutton/label-radiobutton';
+import NissanInputBox from '../../../common/component/label-inputbox/label-inputbox';
+class AutomationProfileContainer extends React.Component {
+  getEnvStabilityFst=(args)=>{
+  this.props.getEnvStabilityFst(args)
+  }
+  getEnvStabilityScnd=(args)=>{
+    this.props.getEnvStabilityScnd(args)
+  }
+  getEmplyProfileFst=(args)=>{
+   this.props.getEmplyProfileFst(args)
+  }
+  getEmplyProfileScnd=(args)=>{
+    this.props.getEmplyProfileScnd(args)
+  }
+  getEmplyProfileThrd=(args)=>{
+    this.props.getEmplyProfileThrd(args);
+  }
+  getComments=(args)=>{
+   this.props.getComments(args);
+  }
+  onGetValue=(args,id)=>{
+   this.props.onGetValue(args,id)
+  }
+  render() {
+    const{
+      ErrReason,
+      ErrEnvStabilityFst,
+      ErrEnvStabilityScnd,
+      ErrEmplyProfileFst,
+      ErrEmplyProfileScnd,
+      ErrEmplyProfileThrd,
+      ErrComments,
+      envStabilityList,
+      automationData
+    }=this.props
+    const{
+      primaryReasonForAutomation,
+      envStabilityDataFst,
+      envStabilityDataScnd,
+      emplyProfileDataFst,
+      emplyProfileDataScnd,
+      emplyProfileDataThrd,
+      commentsForAutomation,
+    }=automationData
+    return (
+      <React.Fragment>
+        <div className={"row"}>
+          <div className={"col-lg-12"}>
+            <div className={"automationprofile-container"}>
+              <div className={"row"}>
+                <div className={"col-md-12"}>
+                  <h5>Automation Goal</h5>
+                </div>
+              </div>
+              <div className={"row"}>
+                <div className={"col-md-12 nissan-radio-btn"}>
+                  <p className="primary-label">{'Primary Reason to Automate the Process'}<span>*</span></p>
+                  <div className={ErrReason? "d-inline-flex align-items-end borderRed":"d-inline-flex align-items-end"}>
+                      <NissanRadioButton Radiolabelprops={{ labelname: 'Cost', className: "",value:primaryReasonForAutomation,groupname:'ErrReason',checked:primaryReasonForAutomation==='Cost'}} onGetValue={(args) => this.onGetValue(args,1)} />
+                      <NissanRadioButton Radiolabelprops={{ labelname: 'Quality', className: "",value:primaryReasonForAutomation,groupname:'ErrReason',checked:primaryReasonForAutomation==='Quality'}} onGetValue={(args) => this.onGetValue(args,2)} />
+                      <NissanRadioButton Radiolabelprops={{ labelname: 'Productivity', className: "",value:primaryReasonForAutomation,groupname:'ErrReason',checked:primaryReasonForAutomation==='Productivity'}} onGetValue={(args) => this.onGetValue(args,3)} /> 
+                  </div>
+                </div>
+              </div>
+              <div className={"row mg-top-20"}>
+                <div className={"col-md-12 mg-btm-10"}>
+                  <h5>Environmental Stability</h5>
+                </div>
+                <div className={"col-md-4"}>
+                  <SelectDropDown dropdownlabelprops={{ labelname: 'Process Changes Expected in the Next 3 Months', option: envStabilityList,className: ErrEnvStabilityFst? "form-group nissan-form-error" :"form-group",value:envStabilityDataFst }} getSelectValue={(args)=>this.getEnvStabilityFst(args)} />
+                </div>
+                <div className={"col-md-4"}>
+                  <SelectDropDown dropdownlabelprops={{ labelname: 'Applications Changes Expected in the Next 3 Months', option:envStabilityList, className:ErrEnvStabilityScnd? "form-group nissan-form-error" :"form-group" ,value:envStabilityDataScnd}} getSelectValue={(args)=>this.getEnvStabilityScnd(args)}/>
+                </div>
+              </div>
+              <div className={"row mg-top-20 mg-btm-30"}>
+                <div className={"col-md-12 mg-btm-10"}>
+                  <h5>Employee Profile</h5>
+                </div>
+                <div className={"col-md-4"}>
+                <NissanInputBox inputlabelprops={{labelname : 'Number of days worked/month', placeholder: 'Enter Number of days worked/month...', className : ErrEmplyProfileFst? "form-group nissan-form-error":"form-group", isQuestion:false,value:emplyProfileDataFst }} getValue={(args)=>this.getEmplyProfileFst(args)}/>
+                  {/* <SelectDropDown dropdownlabelprops={{ labelname: 'Number of days worked/month', option: ["john", "john1", "john2", "john3"], className:ErrEmplyProfileFst ? "form-group nissan-form-error" : "form-group",value:emplyProfileDataFst }} getSelectValue={(args)=>this.getEmplyProfileFst(args)}/> */}
+                </div>
+                <div className={"col-md-4"}>
+                <NissanInputBox inputlabelprops={{labelname : 'Working Hours/Day', placeholder: 'Enter Working Hours/Day...', className : ErrEmplyProfileScnd? "form-group nissan-form-error":"form-group", isQuestion:false,value:emplyProfileDataScnd }} getValue={(args)=>this.getEmplyProfileScnd(args)}/>
+                  {/* <SelectDropDown dropdownlabelprops={{ labelname: 'Working Hours/Day', option: ["john", "john1", "john2", "john3"], className:ErrEmplyProfileScnd ? "form-group nissan-form-error" : "form-group",value:emplyProfileDataScnd  }} getSelectValue={(args)=>this.getEmplyProfileScnd(args)}/> */}
+                </div>
+                <div className={"col-md-4"}>
+                  <NissanInputBox inputlabelprops={{labelname : 'Average Employee Full Cost/Year', placeholder: 'Enter Average Employee Full Cost/Year...', className : ErrEmplyProfileThrd? "form-group nissan-form-error":"form-group", isQuestion:false,value:emplyProfileDataThrd }} getValue={(args)=>this.getEmplyProfileThrd(args)}/>
+                  {/* <SelectDropDown dropdownlabelprops={{ labelname: 'Average Employee Full Cost/Year', option: ["john", "john1", "john2", "john3"], className:ErrEmplyProfileThrd? "form-group nissan-form-error": "form-group",value:emplyProfileDataThrd }} getSelectValue={(args)=>this.getEmplyProfileThrd(args)}/> */}
+                </div>
+              </div>
+              <hr />
+              <div className={"row mg-top-30"}>
+                <div className={"col-md-12"}>
+                  <NissanTexaArea inputlabelprops={{ labelname: 'Comments', placeholder: 'Write your comment...', className:ErrComments? "form-group nissan-form-error":"form-group" ,value:commentsForAutomation}} getTextAreaValue={(args)=>this.getComments(args)}/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </React.Fragment>
+    );
+
+  }
+}
+export default AutomationProfileContainer;
